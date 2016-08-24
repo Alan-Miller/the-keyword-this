@@ -7,10 +7,71 @@
   // 2) What are the four rules that govern what the 'this keyword' is bound to and describe each?
 
       //Answer:
-      //1. The new keyword. It makes a new object, assigns it to this, then returns the object.
-      //2. Explicit binding (.call, .apply, or .bind).
-      //3. Implicit binding (what is left of the dot, what called the function).
-      //4. Default binding. The window.
+      /*
+        1. EXPLICIT binding     Right of the dot. Use of .call, .apply, or .bind to attach a method to
+                                some (any) object. The first two (.call and .apply) call the function
+                                immediately, whereas .bind attaches context and waits till called.
+              e.g.:
+              function myFunc(param1, param2) {
+                 console.log(this.name, param1, param2);
+              }
+              myFunc.call({name: "DM13"});  //               // .call calls the function immediately
+              myFunc.apply({name: "DM13"});                 // .apply calls the function immediately
+              var dm15Func = myFunc.bind({name: "DM15"});  // .bind returns a function without calling right away
+                                                          // .bind never takes parametes, only context
+                                                         // .bind can be applies multiple times
+
+        2. IMPLICIT binding     Whatever is left of the dot, what called the function.
+                                The object where the method is.
+              e.g.:
+              function myFunc() {
+                return this.name;
+              }
+              function (calcRacetimes() {
+                return Math.average(this.laps, this.name);
+              }
+
+              var person = {
+                name: 'Davey',
+                laps: [10, 15, 12, 6, 26, 124],
+                calculateRaceTime: calcRacetimes
+              }
+              person.calculateRaceTime();
+              person.personFunc(3, 6);  // Davey 3 6
+
+              var person2 = {
+                name: 'Smavey',
+                personFunc: myFunc
+              }
+              person2.personFunc(5, 5); // Smavey 5 5
+
+
+        3. DEFAULT/WINDOW binding.      The window.
+            e.g.:
+            function func2() {
+              console.log(this.title);
+              this.title = "mwahahahahaha";
+            }
+        4. NEW binding.         The new keyword. It makes a new object, assigns it to this, then
+                                returns the object. It does this through a constructor function.
+            e.g.:
+            function Animal(size, legs, sound) {
+                                  // this = {}
+              this.size = size;
+              this.legs = legs;
+              this.sound = sound;
+              this.makeSound = function() {
+                console.log(this.sound);
+              }
+              this.run = function() {
+                console.log("I run on " + this.legs + " legs");
+              }
+                                  //return this
+            }
+
+            var giraffe = new Animal ('large', 4, 'large goat bleet');
+            var zebra = new Animal ('medium', 4, 'whoop whoop');
+      */
 
   // 3) What is the difference between call and apply?
 
@@ -48,10 +109,13 @@ var doIt = user.getUsername();
 // Write the function definitions which will make the following function invocations function properly.
 
   //Function Invocations Here
-function Car() {
-  moveCar = function() {
-    this.move = move;
-    return this.move;
+function Car(make, model, year) {
+  this.make = make;
+  this.model = model;
+  this.year = year;
+  this.move = 0;
+  this.moveCar = function() {
+      return this.move + 10;
   };
 }
 
@@ -79,8 +143,8 @@ var getYear = function(){
 
 //Note(no tests)
   //Code Here
-prius.getYear();
-mustang.getYear();
+getYear.apply(prius);
+getYear.apply(mustang);
 
 
 //New Problem
@@ -95,7 +159,7 @@ var getMyUsername = function() {
  return this.username;
 };
 
-var userName = getMyUsername(); //Fix this
+var userName = getMyUsername.apply(myUser); //Fix this
 
 //Above you're given an object, a function, and a setTimeout invocation. After 5 seconds, what will the getUsername function return?
 //Note(no tests)
